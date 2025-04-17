@@ -13,6 +13,8 @@ export const HotelPage = () => {
   const [ratingFilter, setRatingFilter] = useState("all");
   const [priceFilter, setPriceFilter] = useState("all");
   const [discountFilter, setDiscountFilter] = useState("all");
+  const [randomTrips, setRandomTrips] = useState([]);
+  const [modeFilter, setModeFilter] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -28,6 +30,11 @@ export const HotelPage = () => {
   const toggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
     document.body.classList.toggle("dark");
+  };
+
+  const suggestRandomTrips = () => {
+    const shuffled = [...hotels].sort(() => 0.5 - Math.random());
+    setRandomTrips(shuffled.slice(0, 5));
   };
 
   const filterHotels = () => {
@@ -70,6 +77,10 @@ export const HotelPage = () => {
         if (discountFilter === "between20and30")
           return discount >= 20 && discount <= 30;
         return true;
+      })
+      .filter((hotel) => {
+        if (modeFilter.length === 0) return true; // If no modes are selected, show all
+        return modeFilter.some((mode) => hotel.mood?.toLowerCase().includes(mode));
       });
   };
 
@@ -87,8 +98,8 @@ export const HotelPage = () => {
         isDarkMode={isDarkMode}
         toggleDarkMode={toggleDarkMode}
       />
-      {/* <NearestLocation hotels={hotels}/> */}
 
+      {/* Chatbot */}
       <Chatbot />
 
       <main className="flex-grow container mx-auto px-4 pt-24 pb-12">
@@ -100,6 +111,24 @@ export const HotelPage = () => {
           Hotels
         </h1>
 
+        {/* 🎲 No Travel Mode Button */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <button
+            onClick={suggestRandomTrips}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl"
+          >
+            🎲 No Travel Mode – Surprise Me!
+          </button>
+          {randomTrips.length > 0 && (
+            <button
+              onClick={() => setRandomTrips([])}
+              className="text-sm underline text-blue-500 hover:text-blue-700"
+            >
+              Back to All Hotels
+            </button>
+          )}
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
           <aside className="w-full lg:w-1/3 xl:w-1/4 sticky top-24 self-start">
@@ -109,75 +138,168 @@ export const HotelPage = () => {
               {/* Rating */}
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-white mb-4">Rating</h3>
-                <FilterButton
+                <FilterCheckbox
                   label="All"
-                  active={ratingFilter === "all"}
-                  onClick={() => setRatingFilter("all")}
+                  checked={ratingFilter === "all"}
+                  onChange={() => setRatingFilter("all")}
                 />
-                <FilterButton
+                <FilterCheckbox
                   label="Above 3 Stars"
-                  active={ratingFilter === "above3"}
-                  onClick={() => setRatingFilter("above3")}
+                  checked={ratingFilter === "above3"}
+                  onChange={() => setRatingFilter("above3")}
                 />
-                <FilterButton
+                <FilterCheckbox
                   label="Below 4 Stars"
-                  active={ratingFilter === "below4"}
-                  onClick={() => setRatingFilter("below4")}
+                  checked={ratingFilter === "below4"}
+                  onChange={() => setRatingFilter("below4")}
                 />
-                <FilterButton
+                <FilterCheckbox
                   label="3 - 4 Stars"
-                  active={ratingFilter === "between3and4"}
-                  onClick={() => setRatingFilter("between3and4")}
+                  checked={ratingFilter === "between3and4"}
+                  onChange={() => setRatingFilter("between3and4")}
                 />
               </div>
 
               {/* Price */}
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-white mb-4">Price</h3>
-                <FilterButton
+                <FilterCheckbox
                   label="All"
-                  active={priceFilter === "all"}
-                  onClick={() => setPriceFilter("all")}
+                  checked={priceFilter === "all"}
+                  onChange={() => setPriceFilter("all")}
                 />
-                <FilterButton
+                <FilterCheckbox
                   label="Below ₹2000"
-                  active={priceFilter === "below2000"}
-                  onClick={() => setPriceFilter("below2000")}
+                  checked={priceFilter === "below2000"}
+                  onChange={() => setPriceFilter("below2000")}
                 />
-                <FilterButton
+                <FilterCheckbox
                   label="₹2000 - ₹5000"
-                  active={priceFilter === "between2000and5000"}
-                  onClick={() => setPriceFilter("between2000and5000")}
+                  checked={priceFilter === "between2000and5000"}
+                  onChange={() => setPriceFilter("between2000and5000")}
                 />
-                <FilterButton
+                <FilterCheckbox
                   label="Above ₹5000"
-                  active={priceFilter === "above5000"}
-                  onClick={() => setPriceFilter("above5000")}
+                  checked={priceFilter === "above5000"}
+                  onChange={() => setPriceFilter("above5000")}
                 />
               </div>
 
               {/* Discount */}
-              <div>
+              <div className="mb-8">
                 <h3 className="text-xl font-semibold text-white mb-4">Discount</h3>
-                <FilterButton
+                <FilterCheckbox
                   label="All"
-                  active={discountFilter === "all"}
-                  onClick={() => setDiscountFilter("all")}
+                  checked={discountFilter === "all"}
+                  onChange={() => setDiscountFilter("all")}
                 />
-                <FilterButton
+                <FilterCheckbox
                   label="Above 10%"
-                  active={discountFilter === "above10"}
-                  onClick={() => setDiscountFilter("above10")}
+                  checked={discountFilter === "above10"}
+                  onChange={() => setDiscountFilter("above10")}
                 />
-                <FilterButton
+                <FilterCheckbox
                   label="Below 20%"
-                  active={discountFilter === "below20"}
-                  onClick={() => setDiscountFilter("below20")}
+                  checked={discountFilter === "below20"}
+                  onChange={() => setDiscountFilter("below20")}
                 />
-                <FilterButton
+                <FilterCheckbox
                   label="20% - 30%"
-                  active={discountFilter === "between20and30"}
-                  onClick={() => setDiscountFilter("between20and30")}
+                  checked={discountFilter === "between20and30"}
+                  onChange={() => setDiscountFilter("between20and30")}
+                />
+              </div>
+
+              {/* Mode */}
+              <div className="mb-8">
+                <h3 className="text-xl font-semibold text-white mb-4">Mode</h3>
+                <FilterCheckbox
+                  label="Romantic"
+                  checked={modeFilter.includes("romantic")}
+                  onChange={() =>
+                    setModeFilter((prev) =>
+                      prev.includes("romantic")
+                        ? prev.filter((item) => item !== "romantic")
+                        : [...prev, "romantic"]
+                    )
+                  }
+                />
+                <FilterCheckbox
+                  label="Adventurous"
+                  checked={modeFilter.includes("adventurous")}
+                  onChange={() =>
+                    setModeFilter((prev) =>
+                      prev.includes("adventurous")
+                        ? prev.filter((item) => item !== "adventurous")
+                        : [...prev, "adventurous"]
+                    )
+                  }
+                />
+                <FilterCheckbox
+                  label="Spiritual"
+                  checked={modeFilter.includes("spiritual")}
+                  onChange={() =>
+                    setModeFilter((prev) =>
+                      prev.includes("spiritual")
+                        ? prev.filter((item) => item !== "spiritual")
+                        : [...prev, "spiritual"]
+                    )
+                  }
+                />
+                <FilterCheckbox
+                  label="Luxurious"
+                  checked={modeFilter.includes("luxurious")}
+                  onChange={() =>
+                    setModeFilter((prev) =>
+                      prev.includes("luxurious")
+                        ? prev.filter((item) => item !== "luxurious")
+                        : [...prev, "luxurious"]
+                    )
+                  }
+                />
+                <FilterCheckbox
+                  label="Rejuvenating"
+                  checked={modeFilter.includes("rejuvenating")}
+                  onChange={() =>
+                    setModeFilter((prev) =>
+                      prev.includes("rejuvenating")
+                        ? prev.filter((item) => item !== "rejuvenating")
+                        : [...prev, "rejuvenating"]
+                    )
+                  }
+                />
+                <FilterCheckbox
+                  label="Cultural"
+                  checked={modeFilter.includes("cultural")}
+                  onChange={() =>
+                    setModeFilter((prev) =>
+                      prev.includes("cultural")
+                        ? prev.filter((item) => item !== "cultural")
+                        : [...prev, "cultural"]
+                    )
+                  }
+                />
+                <FilterCheckbox
+                  label="Wild"
+                  checked={modeFilter.includes("wild")}
+                  onChange={() =>
+                    setModeFilter((prev) =>
+                      prev.includes("wild")
+                        ? prev.filter((item) => item !== "wild")
+                        : [...prev, "wild"]
+                    )
+                  }
+                />
+                <FilterCheckbox
+                  label="Serene"
+                  checked={modeFilter.includes("serene")}
+                  onChange={() =>
+                    setModeFilter((prev) =>
+                      prev.includes("serene")
+                        ? prev.filter((item) => item !== "serene")
+                        : [...prev, "serene"]
+                    )
+                  }
                 />
               </div>
             </div>
@@ -185,7 +307,11 @@ export const HotelPage = () => {
 
           {/* Hotels */}
           <section className="flex-1 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredHotels.length > 0 ? (
+            {randomTrips.length > 0 ? (
+              randomTrips.map((hotel) => (
+                <HotelCard key={hotel.id} hotel={hotel} />
+              ))
+            ) : filteredHotels.length > 0 ? (
               filteredHotels.map((hotel) => (
                 <HotelCard key={hotel.id} hotel={hotel} />
               ))
@@ -203,16 +329,15 @@ export const HotelPage = () => {
   );
 };
 
-// 🧩 Reusable Filter Button
-const FilterButton = ({ label, active, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`block w-full text-left px-6 py-3 rounded-lg mb-3 font-semibold text-lg ${
-      active
-        ? "bg-blue-600 text-white"
-        : "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-    }`}
-  >
-    {label}
-  </button>
+// 🧩 Reusable Filter Checkbox
+const FilterCheckbox = ({ label, checked, onChange }) => (
+  <div className="flex items-center mb-3">
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+      className="mr-3 rounded-sm text-indigo-600"
+    />
+    <label className="text-white">{label}</label>
+  </div>
 );

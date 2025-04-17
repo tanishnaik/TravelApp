@@ -9,11 +9,10 @@ import { ConfirmBooking } from "./pages/ConfirmBooking";
 import SignUpForm from "./pages/SignUpForm";
 import LoginForm from "./pages/LoginForm";
 import { PrivateRoute } from "./components/PrivateRoute";
-import AdminPage from "./pages/Admin";
+
 function App() {
   return (
     <Routes>
-      {/* ✅ Protected Routes */}
       <Route
         path="/"
         element={
@@ -47,12 +46,11 @@ function App() {
         }
       />
 
-      {/* 🔓 Public Routes */}
+      {/* Public Routes */}
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/signup" element={<SignUpForm />} />
       <Route path="/login" element={<LoginForm />} />
-      <Route path="/admin" element={<AdminPage/>}/>
     </Routes>
   );
 }
